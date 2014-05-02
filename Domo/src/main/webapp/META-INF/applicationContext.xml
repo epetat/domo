@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:camel="http://camel.apache.org/schema/spring"
+		xsi:schemaLocation="
+	    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd       
+        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+	<!-- PROCESSEURS -->
+	<bean id="acquisitionArexxProcessor" class="fr.nom.petat.domo.processor.AcquisitionArexxProcessor"/>
+	<bean id="acquisitionDSProcessor" class="fr.nom.petat.domo.processor.AcquisitionDSProcessor">
+		<property name="temperatureService" ref="temperatureService"/>
+	</bean>
+	<bean id="constitutionReleveProcessor" class="fr.nom.petat.domo.processor.ConstitutionReleveProcessor">
+		<property name="moteurService" ref="moteurService"/>
+		<property name="releveService" ref="releveService"/>
+		<property name="VmcService" ref="VmcService"/>
+	</bean>
+
+	<!-- SERVICES -->
+	<bean id="moteurService" class="fr.nom.petat.domo.service.MoteurService"/>
+	<bean id="releveService" class="fr.nom.petat.domo.service.ReleveService"/>
+	<bean id="temperatureService" class="fr.nom.petat.domo.service.temperatureService"/>
+	<bean id="VmcService" class="fr.nom.petat.domo.service.VmcService"/>
+		
+	<!-- ROUTES -->
+	<bean id="acquisitionArexxRouteBuilder" class="fr.nom.petat.domo.route.AcquisitionArexxRoute"/>
+	<bean id="acquisitionDSRouteBuilder" class="fr.nom.petat.domo.route.AcquisitionDSRoute"/>
+	<bean id="constitutionReleveRouteBuilder" class="fr.nom.petat.domo.route.ConstitutionReleveRoute"/>
+
+	<camel:camelContext id="automateContext">
+		<camel:routeBuilder ref="acquisitionArexxRouteBuilder"/>
+		<camel:routeBuilder ref="acquisitionDSRouteBuilder"/>
+		<camel:routeBuilder ref="constitutionReleveRouteBuilder"/>
+	</camel:camelContext>
+</beans>
