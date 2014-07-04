@@ -2,7 +2,7 @@ package fr.nom.petat.domo.service;
 
 import org.apache.log4j.Logger;
 
-import fr.nom.petat.domo.bean.EtatMoteurBean;
+import fr.nom.petat.domo.bean.MoteurBean;
 import fr.nom.petat.domo.bean.MoteurControllerBean;
 
 public class MoteurService {
@@ -61,10 +61,10 @@ public class MoteurService {
 		return MoteurControllerBean.getInstance().getEtatCourant().isMoteurActif();
 	}
 	
-	public EtatMoteurBean getCopieEtatMoteur() {
-		EtatMoteurBean etatMoteur = new EtatMoteurBean(MoteurControllerBean.getInstance().getEtatCourant().getVitesse(), 
-													   MoteurControllerBean.getInstance().getEtatCourant().isMoteurActif());
-		return etatMoteur;
+	public MoteurBean getCopieMoteur() {
+		MoteurBean moteur = new MoteurBean(MoteurControllerBean.getInstance().getEtatCourant().getVitesse(), 
+										   MoteurControllerBean.getInstance().getEtatCourant().isMoteurActif());
+		return moteur;
 	}
 	
 	/**
@@ -73,7 +73,9 @@ public class MoteurService {
 	 * @param pTemperatureInsufleCourt	La température d'insuflation par le circuit court
 	 * @param pTemperatureInsufleLong	La température d'insuflation par le circuit long
 	 */
-	public void determinationAutomatique(Double pTemeratureCheminee, Double pTemperatureInsufleCourt, Double pTemperatureInsufleLong) {
+	public void determinationAutomatique(Double pTemeratureCheminee, 
+										 Double pTemperatureInsufleCourt, 
+										 Double pTemperatureInsufleLong) {
 		// Calcul de la température minimum d'insuflation
 		Double sondeVmcInsufleMini = null;
 		if (pTemperatureInsufleCourt != null && pTemperatureInsufleLong != null) {

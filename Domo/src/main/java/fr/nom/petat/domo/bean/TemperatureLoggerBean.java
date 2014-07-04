@@ -8,7 +8,7 @@ public class TemperatureLoggerBean {
 	private static List<TemperatureLoggerBean> listeTemperatureLogger = null;
 	
 	public static TemperatureLoggerBean SONDE_CHEMINEE 			= new TemperatureLoggerBean("Cheminée", TypeSonde.DS18B20, "28-00000520709c");
-	public static TemperatureLoggerBean SONDE_MELANGE 			= new TemperatureLoggerBean("Mélangé", TypeSonde.DS18B20, "28-0000052104cf");
+	public static TemperatureLoggerBean SONDE_INTERIEUR 		= new TemperatureLoggerBean("Intérieur", TypeSonde.DS18B20, "28-0000052104cf");
 	public static TemperatureLoggerBean SONDE_VMC_ENTRANT 		= new TemperatureLoggerBean("VMC entrant", TypeSonde.AREXX, "8515");
 	public static TemperatureLoggerBean SONDE_VMC_SORTANT 		= new TemperatureLoggerBean("VMC sortant", TypeSonde.AREXX, "8444");
 	public static TemperatureLoggerBean SONDE_VMC_INSUFLE 		= new TemperatureLoggerBean("VMC insuflé", TypeSonde.AREXX, "8345");

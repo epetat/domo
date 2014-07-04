@@ -7,7 +7,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import fr.nom.petat.domo.bean.RelevesBean;
 import fr.nom.petat.domo.service.MoteurService;
@@ -29,6 +28,7 @@ public class SupervisionController {
         return "supervision";
 	}
 	
+	@RequestMapping("/demarrer")
     public String demarrer(ModelMap model) throws IOException, InterruptedException {
 		logger.debug("Début demarrer");
         MoteurService moteurService = new MoteurService();
@@ -37,6 +37,7 @@ public class SupervisionController {
         return printSupervision(model);
     }
 
+	@RequestMapping("/arreter")
     public String arreter(ModelMap model) throws IOException, InterruptedException {
 		logger.debug("Début arreter");
         MoteurService moteurService = new MoteurService();
@@ -45,6 +46,7 @@ public class SupervisionController {
         return printSupervision(model);
     }
 
+	@RequestMapping("/diminuer")
     public String diminuer(ModelMap model) throws IOException, InterruptedException {
 		logger.debug("Début diminuer");
         MoteurService moteurService = new MoteurService();
@@ -53,6 +55,7 @@ public class SupervisionController {
     	return printSupervision(model);
     }
 
+	@RequestMapping("/augmenter")
     public String augmenter(ModelMap model) throws IOException, InterruptedException {
 		logger.debug("Début augmenter");
         MoteurService moteurService = new MoteurService();
@@ -61,6 +64,7 @@ public class SupervisionController {
         return printSupervision(model);
     }
 
+	@RequestMapping("/actualiser")
     public String actualiser(Integer vitesseSaisie, ModelMap model) throws IOException, InterruptedException {
 		logger.debug("Début actualiser");
         MoteurService moteurService = new MoteurService();
@@ -72,25 +76,4 @@ public class SupervisionController {
     	
         return printSupervision(model);
     }
-
-	@RequestMapping(method = RequestMethod.POST)
-    public String submit(@RequestParam(value="action", required=false) String action, 
-    					 @RequestParam(value="vitesseSaisie", required=false) Integer vitesseSaisie, 
-    					 ModelMap model) throws IOException, InterruptedException {
-		logger.debug("Début submit");
-		logger.debug("Action = " + action);
-		if ("demarrer".equals(action)) {
-			return demarrer(model);
-		} else if ("arreter".equals(action)) {
-			return arreter(model);
-		} else if ("diminuer".equals(action)) {
-			return diminuer(model);
-		} else if ("augmenter".equals(action)) {
-			return augmenter(model);
-		} else if ("actualiser".equals(action)) {
-			return actualiser(vitesseSaisie, model);
-		} else {
-			return printSupervision(model);
-		}
-	}
 }

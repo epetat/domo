@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.nom.petat.domo.bean.ReleveTemperatureBean;
 import fr.nom.petat.domo.bean.TemperatureLoggerBean;
@@ -14,6 +15,7 @@ import fr.nom.petat.domo.service.TemperatureService;
 public class AcquisitionDSProcessor {
 	public Logger logger = Logger.getLogger(AcquisitionDSProcessor.class);
 	
+	@Autowired
 	private TemperatureService temperatureService = null;
 	
 	/**
@@ -34,7 +36,7 @@ public class AcquisitionDSProcessor {
 			logger.error("Impossible d'obtenir la température de la cheminée",e);
 		}
 		try {
-			sondeMelangee = temperatureService.lireTemperature(TemperatureLoggerBean.SONDE_MELANGE);
+			sondeMelangee = temperatureService.lireTemperature(TemperatureLoggerBean.SONDE_INTERIEUR);
 		} catch (Exception e) {
 			logger.error("Impossible d'obtenir la température mélangée",e);
 		}
@@ -69,7 +71,7 @@ public class AcquisitionDSProcessor {
 		releveTemperatureBean.setTemperature(Double.valueOf(sondeMelangee));
 		
 		// Logger
-		releveTemperatureBean.setTemperatureLogger(TemperatureLoggerBean.SONDE_MELANGE);
+		releveTemperatureBean.setTemperatureLogger(TemperatureLoggerBean.SONDE_INTERIEUR);
 		
 		listeReleveTemperatureBean.add(releveTemperatureBean);
 		

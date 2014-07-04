@@ -3,10 +3,12 @@ package fr.nom.petat.domo.processor;
 import org.apache.camel.Body;
 import org.apache.camel.Exchange;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.nom.petat.domo.bean.ReleveTemperatureBean;
 import fr.nom.petat.domo.bean.RelevesBean;
 import fr.nom.petat.domo.bean.TemperatureLoggerBean;
+import fr.nom.petat.domo.bean.VmcBean;
 import fr.nom.petat.domo.service.MoteurService;
 import fr.nom.petat.domo.service.ReleveService;
 import fr.nom.petat.domo.service.VmcService;
@@ -14,8 +16,11 @@ import fr.nom.petat.domo.service.VmcService;
 public class ConstitutionReleveProcessor {
 	public Logger logger = Logger.getLogger(ConstitutionReleveProcessor.class);
 	
+	@Autowired
 	private MoteurService moteurService = null;
+	@Autowired
 	private ReleveService releveService = null;
+	@Autowired
 	private VmcService vmcService = null;
 
 	/**
@@ -25,25 +30,13 @@ public class ConstitutionReleveProcessor {
 	 */
 	public void ajoutMoteur(@Body RelevesBean pReleve, Exchange pExchange) {
 		logger.debug("Début ajoutMoteur");
-		Double sondeCheminee = null;
-		Double sondeVmcInsufleCourt = null;
-		Double sondeVmcInsufleLong = null;
 		
-		// Récupération de températures
-		for (ReleveTemperatureBean releveTemperatureBean : pReleve.getTemperatures()) {
-			if (releveTemperatureBean.getTemperatureLogger().equals(TemperatureLoggerBean.SONDE_CHEMINEE)) {
-				sondeCheminee = releveTemperatureBean.getTemperature();
-			} else if (releveTemperatureBean.getTemperatureLogger().equals(TemperatureLoggerBean.SONDE_VMC_INSUFLE_COURT)) {
-				sondeVmcInsufleCourt = releveTemperatureBean.getTemperature();
-			} else if (releveTemperatureBean.getTemperatureLogger().equals(TemperatureLoggerBean.SONDE_VMC_INSUFLE_LONG)) {
-				sondeVmcInsufleLong = releveTemperatureBean.getTemperature();
-			}
-		}
-		
-		moteurService.determinationAutomatique(sondeCheminee, sondeVmcInsufleCourt, sondeVmcInsufleLong);
+		moteurService.determinationAutomatique(pReleve.getTemperatureCheminee().getTemperature(), 
+											   pReleve.getVmc().getTemperatureInsufleCourt().getTemperature(), 
+											   pReleve.getVmc().getTemperatureInsufleLong().getTemperature());
 		
 		// Renseignement de l'état du moteur pour sauvegarde
-		pReleve.setMoteur(moteurService.getCopieEtatMoteur());
+		pReleve.setMoteur(moteurService.getCopieMoteur());
 		logger.debug("Fin ajoutMoteur");
 	}
 	
@@ -53,23 +46,10 @@ public class ConstitutionReleveProcessor {
 	 * @param pExchange	L'échange Camel
 	 */
 	public void calculRendementVmc(@Body RelevesBean pReleve, Exchange pExchange) {
-		Double temperatureVmcEntrant = null;
-		Double temperatureVmcAspire = null;
-		Double temperatureVmcInsufle = null;
-		
-		// Récupération de températures
-		for (ReleveTemperatureBean releveTemperatureBean : pReleve.getTemperatures()) {
-			if (releveTemperatureBean.getTemperatureLogger().equals(TemperatureLoggerBean.SONDE_VMC_ENTRANT)) {
-				temperatureVmcEntrant = releveTemperatureBean.getTemperature();
-			} else if (releveTemperatureBean.getTemperatureLogger().equals(TemperatureLoggerBean.SONDE_VMC_ASPIRE)) {
-				temperatureVmcAspire = releveTemperatureBean.getTemperature();
-			} else if (releveTemperatureBean.getTemperatureLogger().equals(TemperatureLoggerBean.SONDE_VMC_INSUFLE)) {
-				temperatureVmcInsufle = releveTemperatureBean.getTemperature();
-			}
-		}
+		VmcBean vmc = pReleve.getVmc();
 		
 		// Calcul du rendement
-		pReleve.setRendementVmc(vmcService.calculerRendement(temperatureVmcEntrant, temperatureVmcInsufle, temperatureVmcAspire));
+		pReleve.getVmc().setRendementVmc(vmcService.calculerRendement(vmc.getTemperatureEntrant().getTemperature(), vmc.getTemperatureInsufle().getTemperature(), vmc.getTemperatureAspire().getTemperature()));
 	}
 	
 	/**

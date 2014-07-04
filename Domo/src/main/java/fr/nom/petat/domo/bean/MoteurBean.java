@@ -1,13 +1,13 @@
 package fr.nom.petat.domo.bean;
 
 
-public class EtatMoteurBean {
+public class MoteurBean {
 	private int vitesse = 0;
 	private boolean moteurActif = false;
 	/**
 	 * Constructeur par défaut
 	 */
-	public EtatMoteurBean() {
+	public MoteurBean() {
 		super();
 	}
 	/**
@@ -15,7 +15,7 @@ public class EtatMoteurBean {
 	 * @param vitesse
 	 * @param moteurActif
 	 */
-	public EtatMoteurBean(int vitesse, boolean moteurActif) {
+	public MoteurBean(int vitesse, boolean moteurActif) {
 		super();
 		this.vitesse = vitesse;
 		this.moteurActif = moteurActif;

@@ -1,14 +1,13 @@
 package fr.nom.petat.domo.bean;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class RelevesBean {
 	private Date dateReleve;
-	private List<ReleveTemperatureBean> temperatures;
-	private Double rendementVmc;
-	private EtatMoteurBean moteur;
+	private ReleveTemperatureBean temperatureCheminee;
+	private ReleveTemperatureBean temperatureInterieur;
+	private VmcBean vmc;
+	private MoteurBean moteur;
 	
 	/**
 	 * @return the dateReleve
@@ -25,60 +24,61 @@ public class RelevesBean {
 	}
 	
 	/**
-	 * @return the temperatures
-	 */
-	public List<ReleveTemperatureBean> getTemperatures() {
-		if (temperatures == null) {
-			temperatures = new ArrayList<ReleveTemperatureBean>();
-		}
-		return temperatures;
-	}
-	
-	/**
-	 * @param pTemperatures the temperatures to set
-	 */
-	public void setTemperatures(List<ReleveTemperatureBean> pTemperatures) {
-		this.temperatures = pTemperatures;
-	}
-	
-	/**
-	 * 
-	 * @param pReleveTemperatureBean La température d'une sonde
-	 */
-	public void addTemperature(ReleveTemperatureBean pReleveTemperatureBean) {
-		int i = getTemperatures().indexOf(pReleveTemperatureBean);
-		if (i != -1) {
-			getTemperatures().get(i).setTemperature(pReleveTemperatureBean.getTemperature());
-		} else {
-			getTemperatures().add(pReleveTemperatureBean);
-		}
-	}
-	
-	/**
 	 * @return the moteur
 	 */
-	public EtatMoteurBean getMoteur() {
+	public MoteurBean getMoteur() {
 		return moteur;
 	}
 
 	/**
 	 * @param pMoteur the moteur to set
 	 */
-	public void setMoteur(EtatMoteurBean pMoteur) {
+	public void setMoteur(MoteurBean pMoteur) {
 		this.moteur = pMoteur;
 	}
 
 	/**
-	 * @return the rendementVmc
+	 * @return the vmc
 	 */
-	public Double getRendementVmc() {
-		return rendementVmc;
+	public VmcBean getVmc() {
+		if (vmc == null) {
+			vmc = new VmcBean();
+		}
+		return vmc;
 	}
 
 	/**
-	 * @param pRendementVmc the rendementVmc to set
+	 * @param vmc the vmc to set
 	 */
-	public void setRendementVmc(Double pRendementVmc) {
-		this.rendementVmc = pRendementVmc;
+	public void setVmc(VmcBean vmc) {
+		this.vmc = vmc;
+	}
+
+	/**
+	 * @return the temperatureCheminee
+	 */
+	public ReleveTemperatureBean getTemperatureCheminee() {
+		return temperatureCheminee;
+	}
+
+	/**
+	 * @param temperatureCheminee the temperatureCheminee to set
+	 */
+	public void setTemperatureCheminee(ReleveTemperatureBean temperatureCheminee) {
+		this.temperatureCheminee = temperatureCheminee;
+	}
+
+	/**
+	 * @return the temperatureInterieur
+	 */
+	public ReleveTemperatureBean getTemperatureInterieur() {
+		return temperatureInterieur;
+	}
+
+	/**
+	 * @param temperatureInterieur the temperatureInterieur to set
+	 */
+	public void setTemperatureInterieur(ReleveTemperatureBean temperatureInterieur) {
+		this.temperatureInterieur = temperatureInterieur;
 	}
 }

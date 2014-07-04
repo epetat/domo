@@ -6,9 +6,10 @@
 <script type="text/javascript">
 	function submitAction(pAction) {
 		try {
-			var form = document.frmSupervision;
-			form.action.value = pAction;
-			form.submit();
+			with(document.frmSupervision) {
+				action.value = pAction;
+				submit();
+			}
 		} catch (exception) {
 			alert(exception.description + " dans la methode submitAction");
 		}
@@ -32,15 +33,50 @@
 				</div>
 				<table class="table table-bordered table-striped table-condensed">
 					<tr>
-						<th>Sonde</th>
-						<th>Température (°C)</th>
+						<th>Température intérieur (°C)</th>
+						<td>${releves.temperatureInterieur.temperature}</td>
 					</tr>
-					<c:forEach var="temperature" items="${releves.temperatures}">
-						<tr>
-							<td>${temperature.temperatureLogger.nom}</td>
-							<td>${temperature.temperature}</td>
-						</tr>
-					</c:forEach>
+					<tr>
+						<th>Température cheminée (°C)</th>
+						<td>${releves.temperatureCheminee.temperature}</td>
+					</tr>
+				</table>
+			</div>
+		</section>
+		<section class="col-sm-4 table-responsive">
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3 class="panel-title">La VMC</h3>
+				</div>
+				<table class="table table-bordered table-striped table-condensed">
+					<tr>
+						<th>Température aspiré (°C)</th>
+						<td>${releves.vmc.temperatureAspire.temperature}</td>
+					</tr>
+					<tr>
+						<th>Température entrant (°C)</th>
+						<td>${releves.vmc.temperatureEntrant.temperature}</td>
+					</tr>
+					<tr>
+						<th>Température insufle (°C)</th>
+						<td>${releves.vmc.temperatureInsufle.temperature}</td>
+					</tr>
+					<tr>
+						<th>Température insuflé court (°C)</th>
+						<td>${releves.vmc.temperatureInsufleCourt.temperature}</td>
+					</tr>
+					<tr>
+						<th>Température insuflé long (°C)</th>
+						<td>${releves.vmc.temperatureInsufleLong.temperature}</td>
+					</tr>
+					<tr>
+						<th>Température sortant (°C)</th>
+						<td>${releves.vmc.temperatureSortant.temperature}</td>
+					</tr>
+					<tr>
+						<th>Rendement</th>
+						<td>${releves.vmc.rendementVmc}</td>
+					</tr>
 				</table>
 			</div>
 		</section>
@@ -51,15 +87,11 @@
 				</div>
 				<table class="table table-bordered table-striped table-condensed">
 					<tr>
-						<th>Attribut</th>
-						<th>Valeur</th>
-					</tr>
-					<tr>
-						<td>Activation du moteur</td>
+						<th>Activation du moteur</th>
 						<td>${releves.moteur.moteurActif}</td>
 					</tr>
 					<tr>
-						<td>Vitesse du moteur</td>
+						<th>Vitesse du moteur</th>
 						<td>
 							<div class="row">
 								<div class="col-lg-4">

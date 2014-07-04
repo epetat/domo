@@ -16,10 +16,11 @@ import org.jfree.data.time.Minute;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
-import fr.nom.petat.domo.bean.EtatMoteurBean;
+import fr.nom.petat.domo.bean.MoteurBean;
 import fr.nom.petat.domo.bean.ReleveTemperatureBean;
 import fr.nom.petat.domo.bean.RelevesBean;
 import fr.nom.petat.domo.bean.TemperatureLoggerBean;
+import fr.nom.petat.domo.bean.VmcBean;
 
 public class ReleveDao {
 	public Logger logger = Logger.getLogger(ReleveDao.class);
@@ -36,97 +37,55 @@ public class ReleveDao {
 		logger.debug("Début sauvegarde");
 		Connection laConnection;
 		PreparedStatement ps;
-		
-		Double sondeCheminee = null;
-		Double sondeMelangee = null;
-		Double sondeVmcEntrant = null;
-		Double sondeVmcSortant = null;
-		Double sondeVmcAspire = null;
-		Double sondeVmcInsufle = null;
-		Double sondeInsufleCourt = null;
-		Double sondeInsufleLong = null;
-		for (ReleveTemperatureBean releveTemperatureBean : pReleves.getTemperatures()) {
-			if (releveTemperatureBean.getTemperatureLogger().equals(TemperatureLoggerBean.SONDE_CHEMINEE)) {
-				sondeCheminee = releveTemperatureBean.getTemperature();
-			} else if (releveTemperatureBean.getTemperatureLogger().equals(TemperatureLoggerBean.SONDE_MELANGE)) {
-				sondeMelangee = releveTemperatureBean.getTemperature();
-			} else if (releveTemperatureBean.getTemperatureLogger().equals(TemperatureLoggerBean.SONDE_VMC_ENTRANT)) {
-				sondeVmcEntrant = releveTemperatureBean.getTemperature();
-			} else if (releveTemperatureBean.getTemperatureLogger().equals(TemperatureLoggerBean.SONDE_VMC_SORTANT)) {
-				sondeVmcSortant = releveTemperatureBean.getTemperature();
-			} else if (releveTemperatureBean.getTemperatureLogger().equals(TemperatureLoggerBean.SONDE_VMC_INSUFLE)) {
-				sondeVmcAspire = releveTemperatureBean.getTemperature();
-			} else if (releveTemperatureBean.getTemperatureLogger().equals(TemperatureLoggerBean.SONDE_VMC_ASPIRE)) {
-				sondeVmcInsufle = releveTemperatureBean.getTemperature();
-			} else if (releveTemperatureBean.getTemperatureLogger().equals(TemperatureLoggerBean.SONDE_VMC_INSUFLE_COURT)) {
-				sondeInsufleCourt = releveTemperatureBean.getTemperature();
-			} else if (releveTemperatureBean.getTemperatureLogger().equals(TemperatureLoggerBean.SONDE_VMC_INSUFLE_LONG)) {
-				sondeInsufleLong = releveTemperatureBean.getTemperature();
-			}
-		}
 
 		try {
 //			laConnection = ds.getConnection();
 			Class.forName("com.mysql.jdbc.Driver");
 			laConnection = DriverManager.getConnection("jdbc:mysql://localhost/domo", "root", "***");
 			StringBuffer sb = new StringBuffer("");
-			sb.append("insert into domo_releve(date_releve, temperature_cheminee, temperature_melangee, ");
+			sb.append("insert into domo_releve(date_releve, temperature_cheminee, temperature_interieur, ");
 			sb.append("temperature_vmc_entrant, temperature_vmc_sortant, temperature_vmc_aspire, temperature_vmc_insufle,");
-			sb.append("temperature_insufle_court, temperature_insufle_long, moteur_actif, vitesse_moteur) ");
-			sb.append(" values(now(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+			sb.append("temperature_insufle_court, temperature_insufle_long, moteur_actif, vitesse_moteur, rendement_vmc) ");
+			sb.append(" values(now(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
 			ps = laConnection.prepareStatement(sb.toString());
-			if (logger.isDebugEnabled()) {
-				logger.debug(sb.toString());
-				logger.debug("Température cheminée = " + sondeCheminee);
-				logger.debug("Température mélangé = " + sondeMelangee);
-				logger.debug("Température VMC entrant = " + sondeVmcEntrant);
-				logger.debug("Température VMC sortant = " + sondeVmcSortant);
-				logger.debug("Température VMC aspiré = " + sondeVmcAspire);
-				logger.debug("Température VMC insuflé = " + sondeVmcInsufle);
-				logger.debug("Température insuflé court = " + sondeInsufleCourt);
-				logger.debug("Température insuflé long = " + sondeInsufleLong);
-				if (pReleves.getMoteur() != null) {
-					logger.debug("Moteur actif = " + pReleves.getMoteur().isMoteurActif());
-					logger.debug("Vitesse moteur = " + pReleves.getMoteur().getVitesse());
-				}
-			}
-			if (sondeCheminee != null) {
-				ps.setDouble(1, sondeCheminee);
+
+			if (pReleves.getTemperatureCheminee() != null) {
+				ps.setDouble(1, pReleves.getTemperatureCheminee().getTemperature());
 			} else {
 				ps.setNull(1, Types.DOUBLE);
 			}
-			if (sondeMelangee != null) {
-				ps.setDouble(2, sondeMelangee);
+			if (pReleves.getTemperatureInterieur() != null) {
+				ps.setDouble(2, pReleves.getTemperatureInterieur().getTemperature());
 			} else {
 				ps.setNull(2, Types.DOUBLE);
 			}
-			if (sondeVmcEntrant != null) {
-				ps.setDouble(3, sondeVmcEntrant);
+			if (pReleves.getVmc().getTemperatureEntrant() != null) {
+				ps.setDouble(3, pReleves.getVmc().getTemperatureEntrant().getTemperature());
 			} else {
 				ps.setNull(3, Types.DOUBLE);
 			}
-			if (sondeVmcSortant != null) {
-				ps.setDouble(4, sondeVmcSortant);
+			if (pReleves.getVmc().getTemperatureSortant() != null) {
+				ps.setDouble(4, pReleves.getVmc().getTemperatureSortant().getTemperature());
 			} else {
 				ps.setNull(4, Types.DOUBLE);
 			}
-			if (sondeVmcAspire != null) {
-				ps.setDouble(5, sondeVmcAspire);
+			if (pReleves.getVmc().getTemperatureAspire() != null) {
+				ps.setDouble(5, pReleves.getVmc().getTemperatureAspire().getTemperature());
 			} else {
 				ps.setNull(5, Types.DOUBLE);
 			}
-			if (sondeVmcInsufle != null) {
-				ps.setDouble(6, sondeVmcInsufle);
+			if (pReleves.getVmc().getTemperatureInsufle() != null) {
+				ps.setDouble(6, pReleves.getVmc().getTemperatureInsufle().getTemperature());
 			} else {
 				ps.setNull(6, Types.DOUBLE);
 			}
-			if (sondeInsufleCourt != null) {
-				ps.setDouble(7, sondeInsufleCourt);
+			if (pReleves.getVmc().getTemperatureInsufleCourt() != null) {
+				ps.setDouble(7, pReleves.getVmc().getTemperatureInsufleCourt().getTemperature());
 			} else {
 				ps.setNull(7, Types.DOUBLE);
 			}
-			if (sondeInsufleLong != null) {
-				ps.setDouble(8, sondeInsufleLong);
+			if (pReleves.getVmc().getTemperatureInsufleLong() != null) {
+				ps.setDouble(8, pReleves.getVmc().getTemperatureInsufleLong().getTemperature());
 			} else {
 				ps.setNull(8, Types.DOUBLE);
 			}
@@ -136,6 +95,11 @@ public class ReleveDao {
 			} else {
 				ps.setNull(9, Types.BOOLEAN);
 				ps.setNull(10, Types.INTEGER);
+			}
+			if (pReleves.getVmc().getRendementVmc() != null) {
+				ps.setDouble(11, pReleves.getVmc().getRendementVmc());
+			} else {
+				ps.setNull(11, Types.DOUBLE);
 			}
 			ps.execute();
 		} catch (Exception e) {
@@ -154,7 +118,7 @@ public class ReleveDao {
 		PreparedStatement ps;
 		ResultSet rs;
 		RelevesBean releve = new RelevesBean();
-		String[] sondes = {"temperature_cheminee", "temperature_melangee", "temperature_vmc_entrant", "temperature_vmc_sortant", "temperature_vmc_aspire", "temperature_vmc_insufle", "temperature_insufle_court", "temperature_insufle_long"};
+		String[] sondes = {"temperature_cheminee", "temperature_interieur", "temperature_vmc_entrant", "temperature_vmc_sortant", "temperature_vmc_aspire", "temperature_vmc_insufle", "temperature_insufle_court", "temperature_insufle_long"};
 
 		try {
 //			laConnection = ds.getConnection();
@@ -165,27 +129,27 @@ public class ReleveDao {
 			sb.append("select ");
 			sb.append("		(select max(date_releve) from domo_releve) ");
 			sb.append(getQuerySonde(sondes));
-			sb.append(", moteur_actif, vitesse_moteur ");
+			sb.append(", moteur_actif, vitesse_moteur, rendementVmc ");
 			sb.append("from domo_releve ");
 			sb.append("where date_releve = (select max(date_releve) from domo_releve) ");
 			
 			ps = laConnection.prepareStatement(sb.toString());
-			if (logger.isDebugEnabled()) {
-				logger.debug(sb.toString());
-			}
 			rs = ps.executeQuery();
 			
 			if (rs.next()) {
 				releve.setDateReleve(rs.getTimestamp(1));
-				releve.addTemperature(new ReleveTemperatureBean(TemperatureLoggerBean.SONDE_CHEMINEE, rs.getDouble(2), rs.getTimestamp(1)));
-				releve.addTemperature(new ReleveTemperatureBean(TemperatureLoggerBean.SONDE_MELANGE, rs.getDouble(3), rs.getTimestamp(1)));
-				releve.addTemperature(new ReleveTemperatureBean(TemperatureLoggerBean.SONDE_VMC_ENTRANT, rs.getDouble(4), rs.getTimestamp(1)));
-				releve.addTemperature(new ReleveTemperatureBean(TemperatureLoggerBean.SONDE_VMC_SORTANT, rs.getDouble(5), rs.getTimestamp(1)));
-				releve.addTemperature(new ReleveTemperatureBean(TemperatureLoggerBean.SONDE_VMC_INSUFLE, rs.getDouble(6), rs.getTimestamp(1)));
-				releve.addTemperature(new ReleveTemperatureBean(TemperatureLoggerBean.SONDE_VMC_ASPIRE, rs.getDouble(7), rs.getTimestamp(1)));
-				releve.addTemperature(new ReleveTemperatureBean(TemperatureLoggerBean.SONDE_VMC_INSUFLE_COURT, rs.getDouble(8), rs.getTimestamp(1)));
-				releve.addTemperature(new ReleveTemperatureBean(TemperatureLoggerBean.SONDE_VMC_INSUFLE_LONG, rs.getDouble(9), rs.getTimestamp(1)));
-				releve.setMoteur(new EtatMoteurBean(rs.getInt(11), rs.getBoolean(10)));
+				releve.setTemperatureCheminee(new ReleveTemperatureBean(TemperatureLoggerBean.SONDE_CHEMINEE, rs.getDouble(2), rs.getTimestamp(1)));
+				releve.setTemperatureInterieur(new ReleveTemperatureBean(TemperatureLoggerBean.SONDE_INTERIEUR, rs.getDouble(3), rs.getTimestamp(1)));
+				releve.setMoteur(new MoteurBean(rs.getInt(11), rs.getBoolean(10)));
+				
+				VmcBean vmc = releve.getVmc();
+				vmc.setRendementVmc(rs.getDouble(12));
+				vmc.setTemperatureEntrant(new ReleveTemperatureBean(TemperatureLoggerBean.SONDE_VMC_ENTRANT, rs.getDouble(4), rs.getTimestamp(1)));
+				vmc.setTemperatureSortant(new ReleveTemperatureBean(TemperatureLoggerBean.SONDE_VMC_SORTANT, rs.getDouble(5), rs.getTimestamp(1)));
+				vmc.setTemperatureInsufle(new ReleveTemperatureBean(TemperatureLoggerBean.SONDE_VMC_INSUFLE, rs.getDouble(6), rs.getTimestamp(1)));
+				vmc.setTemperatureInsufleCourt(new ReleveTemperatureBean(TemperatureLoggerBean.SONDE_VMC_INSUFLE_COURT, rs.getDouble(8), rs.getTimestamp(1)));
+				vmc.setTemperatureInsufleLong(new ReleveTemperatureBean(TemperatureLoggerBean.SONDE_VMC_INSUFLE_LONG, rs.getDouble(9), rs.getTimestamp(1)));
+				vmc.setTemperatureAspire(new ReleveTemperatureBean(TemperatureLoggerBean.SONDE_VMC_ASPIRE, rs.getDouble(7), rs.getTimestamp(1)));
 			}
 		
 		} catch (Exception e) {
@@ -234,7 +198,7 @@ public class ReleveDao {
 			Class.forName("com.mysql.jdbc.Driver");
 			laConnection = DriverManager.getConnection("jdbc:mysql://localhost/domo", "root", "***");
 			StringBuffer sb = new StringBuffer("");
-			sb.append("select date_releve, temperature_cheminee, temperature_melangee ");
+			sb.append("select date_releve, temperature_cheminee, temperature_interieur ");
 			sb.append("from domo_releve ");
 			if (pDateDebut != null) {
 				sb.append("where date_releve >= ? ");

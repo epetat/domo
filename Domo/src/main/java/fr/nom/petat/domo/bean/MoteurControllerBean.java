@@ -8,7 +8,7 @@ import com.pi4j.wiringpi.SoftPwm;
 public class MoteurControllerBean {
 	private GpioPinDigitalOutput moteur = null;
 	private static final int GPIO_VITESSE = RaspiPin.GPIO_05.getAddress();
-	private EtatMoteurBean etatCourant = new EtatMoteurBean();
+	private MoteurBean etatCourant = new MoteurBean();
 	private int statusVitesse = -1;
 	
 	private static MoteurControllerBean INSTANCE = null;
@@ -89,14 +89,14 @@ public class MoteurControllerBean {
 	/**
 	 * @return the etatCourant
 	 */
-	public EtatMoteurBean getEtatCourant() {
+	public MoteurBean getEtatCourant() {
 		return etatCourant;
 	}
 
 	/**
 	 * @param pEtatCourant the etatCourant to set
 	 */
-	public void setEtatCourant(EtatMoteurBean pEtatCourant) {
+	public void setEtatCourant(MoteurBean pEtatCourant) {
 		this.etatCourant = pEtatCourant;
 	}
 }
